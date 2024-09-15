@@ -12,9 +12,6 @@ on:
   release:
     types: [published]
 
-permissions:
-  contents: read | write
-
 env:
   DEBIAN_FRONTEND: noninteractive
 
