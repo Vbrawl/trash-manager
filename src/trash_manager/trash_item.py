@@ -21,12 +21,9 @@ if platform.system() == "Linux":
         def for_trashed_file(path: str) -> TrashItem:
             def find_tag(start: int, tag: str):
                 pos = content.find(tag, start)
-                if pos == -1:
-                    return -1, 0
+                if pos == -1: return -1, -1
                 end_pos = content.find(b'\n', pos)
-                if end_pos == -1:
-                    return -1, 0
-                return pos + len(tag), end_pos
+                return (pos + len(tag), end_pos) if end_pos != -1 else (-1, -1)
 
             trash_info_tag = b"[Trash Info]"
             path_tag = b"Path="
@@ -42,13 +39,23 @@ if platform.system() == "Linux":
                 return None
 
             path_pos, path_end_pos = find_tag(trash_info_pos, path_tag)
-            if path_pos == -1:
-                return None
-
             deletion_date_pos, deletion_date_end_pos = find_tag(trash_info_pos, deletion_date_tag)
-            if deletion_date_pos == -1:
+            if path_pos == -1 or deletion_date_pos == -1:
                 return None
 
             path_value = content[path_pos:path_end_pos].decode()
             deletion_date_value = datetime.datetime.fromisoformat(content[deletion_date_pos:deletion_date_end_pos].decode())
             return TrashItem(path_value, deletion_date_value, str(path), str(trashinfo_path))
+
+        def recover(self, recover_to: str = ""):
+            if recover_to == "":
+                recover_to = self.original_path
+            recover_to = Path(recover_to)
+            trashed_file = Path(self.trashed_path)
+            trashinfo_file = Path(self.trashinfo_path)
+
+            if recover_to.exists():
+                raise FileExistsError("A file exists in the trashed file's place")
+
+            trashed_file.rename(str(recover_to))
+            trashinfo_file.unlink(True)
