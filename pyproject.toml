@@ -70,3 +70,10 @@ exclude_lines = [
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/trash_manager"]
+
+
+[tool.pytest.ini_options]
+addopts = '-rx'
+testpaths = [
+  "tests"
+]
