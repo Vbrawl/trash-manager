@@ -13,7 +13,7 @@ on:
     types: [published]
 
 permissions:
-  contents: read
+  contents: read | write
 
 env:
   DEBIAN_FRONTEND: noninteractive
