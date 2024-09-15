@@ -29,10 +29,11 @@ if platform.system() == "Linux":
             files_path = trash_path / "files"
             trash_data = []
 
-            for filename in files_path.iterdir():
-                ti = TrashItem.for_trashed_file(str(filename))
-                if ti is not None:
-                    trash_data.append(ti)
+            if files_path.exists():
+                for filename in files_path.iterdir():
+                    ti = TrashItem.for_trashed_file(str(filename))
+                    if ti is not None:
+                        trash_data.append(ti)
             return trash_data
 
 else:
