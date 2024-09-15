@@ -3,3 +3,4 @@
 # SPDX-License-Identifier: MIT
 
 from .trash_item import TrashItem
+from .trash_manager import TrashManager
