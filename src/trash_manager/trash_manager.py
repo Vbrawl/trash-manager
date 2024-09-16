@@ -40,7 +40,7 @@ if platform.system() == "Linux":
 
 elif platform.system() == "Windows":
     class TrashManager(ITrashManager):
-        USER_TRASH = os.path.join(os.environ["SystemDrive"], "$Recycle.Bin")
+        USER_TRASH = f"{os.environ['SystemDrive']}\\$Recycle.Bin"
 
         def list(self, trash_path: str = "") -> list[TrashItem]:
             # NOTE: We ignore trash_path

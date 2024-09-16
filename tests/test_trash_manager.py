@@ -21,6 +21,11 @@ def test__LINUX__TrashManager_USER_TRASH():
     del os.environ["XDG_DATA_HOME"]
 
 
+@pytest.mark.skipif(platform.system() != "Windows", reason="Function specific to windows")
+def test__LINUX__TrashManager_USER_TRASH():
+    assert os.path.exists(TrashManager.USER_TRASH)
+
+
 def test_TrashManager_list():
     tm = TrashManager()
     assert type(tm.list()) == list
