@@ -32,7 +32,10 @@ classifiers = [
   "Programming Language :: Python :: Implementation :: CPython",
   "Programming Language :: Python :: Implementation :: PyPy",
 ]
-dependencies = []
+dependencies = [
+  "winshell==0.6;platform_system=='Windows'",
+  "pywin32==306;platform_system=='Windows'"
+]
 
 [project.urls]
 Documentation = "https://github.com/vbrawl/trash-manager#readme"
