@@ -3,6 +3,8 @@ from pathlib import Path
 import platform
 from .trash_item import TrashItem
 
+if platform.system() == "Windows":
+    import winshell
 
 class ITrashManager:
     USER_TRASH = ""
@@ -35,6 +37,18 @@ if platform.system() == "Linux":
                     if ti is not None:
                         trash_data.append(ti)
             return trash_data
+
+elif platform.system() == "Windows":
+    class TrashManager(ITrashManager):
+        USER_TRASH = os.path.join(os.environ["SystemDrive"], "$Recycle.Bin")
+
+        def list(self, trash_path: str = "") -> list[TrashItem]:
+            # NOTE: We ignore trash_path
+            items = []
+            for winshell_item in winshell.recycle_bin():
+                item = TrashItem.for_item(winshell_item)
+                items.append(item)
+            return items
 
 else:
     class TrashManager(ITrashManager):

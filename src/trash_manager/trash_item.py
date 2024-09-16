@@ -2,12 +2,19 @@ from __future__ import annotations
 import datetime
 import platform
 from pathlib import Path
+from . import config
+
+if platform.system() == "Windows":
+    import winshell
 
 
 class ITrashItem:
     def __init__(self, original_path: str, deletion_date: datetime.datetime):
         self.original_path = original_path
         self.deletion_date = deletion_date
+    
+    def recover(self, recover_to: str = ""):
+        raise NotImplementedError("This function is not implemented for this OS")
 
 
 if platform.system() == "Linux":
@@ -59,3 +66,26 @@ if platform.system() == "Linux":
 
             trashed_file.rename(str(recover_to))
             trashinfo_file.unlink(True)
+
+elif platform.system() == "Windows":
+    class TrashItem(ITrashItem):
+        def __init__(self, original_path: str, deletion_date: datetime.datetime, item: winshell.ShellRecycledItem):
+            ITrashItem.__init__(self, original_path, deletion_date)
+            self.item = item
+        
+        @staticmethod
+        def for_item(item: winshell.ShellRecycledItem) -> TrashItem:
+            return TrashItem(item.original_filename(), item.recycle_date(), item)
+        
+        def recover(self, recover_to: str = ""):
+            if recover_to == "":
+                recover_to = self.original_path
+            
+            winshell.move_file(
+                self.item.real_filename(),
+                recover_to,
+                allow_undo=config.WINDOWS_TrashItem_recover__ALLOW_UNDO,
+                no_confirm=config.WINDOWS_TrashItem_recover__NO_CONFIRM,
+                rename_on_collision=config.WINDOWS_TrashItem_recover__RENAME_ON_COLLISION,
+                silent=config.WINDOWS_TrashItem_recover__SILENT
+            )
