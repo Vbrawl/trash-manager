@@ -22,7 +22,7 @@ def test__LINUX__TrashManager_USER_TRASH():
 
 
 @pytest.mark.skipif(platform.system() != "Windows", reason="Function specific to windows")
-def test__LINUX__TrashManager_USER_TRASH():
+def test__WINDOWS__TrashManager_USER_TRASH():
     assert os.path.exists(TrashManager.USER_TRASH)
 
 
