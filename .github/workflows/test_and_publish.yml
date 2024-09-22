@@ -9,6 +9,7 @@
 name: Upload Python Package
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
@@ -56,11 +57,19 @@ jobs:
     - name: Build plugin
       run: python3 -m hatch build
 
+    - id: last-release
+      name: Get Last release
+      uses: pozetroninc/github-action-get-latest-release@master
+      with:
+        repository: ${{ github.repository }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        excludes: "prerelease, draft"
+
     - name: Update release
-      uses: Vbrawl/add-release-files@v1-alpha
+      uses: Vbrawl/add-release-files@main
       with:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        TAG_NAME: ${{ github.event.release.tag_name }}
+        TAG_NAME: ${{ steps.last-release.outputs.release }}
         FILES: dist/*.whl
 
     - name: Publish to PyPi
