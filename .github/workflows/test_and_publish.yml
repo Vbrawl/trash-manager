@@ -45,12 +45,6 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Install github cli
-      run: sudo apt install gh
-
-    - name: Authenticate github cli
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
-
     - name: Setup python 3.9.18
       uses: actions/setup-python@v5
       with:
@@ -63,7 +57,11 @@ jobs:
       run: python3 -m hatch build
 
     - name: Update release
-      run: gh release upload ${{ github.event.release.tag_name }} dist/*.whl
+      uses: Vbrawl/add-release-files@v1-alpha
+      with:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        TAG_NAME: ${{ github.event.release.tag_name }}
+        FILES: dist/*.whl
 
     - name: Publish to PyPi
       env:
